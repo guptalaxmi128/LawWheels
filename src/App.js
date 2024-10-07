@@ -6,13 +6,15 @@ import { Toaster } from 'react-hot-toast';
 import { getHeart} from "./actions/heart/heart";
 import HeroLoader from "./components/layout/HeroLoader";
 import "./App.css";
-import Blog from "./components/blog/Blog";
-import ParticularBlog from "./components/blog/ParticularBlog";
+import MutualDivorceLandingPage from "./components/mutualDivorce/MutualDivorceLandingPage";
+import ThankYou from "./components/thankYou/ThankYou";
 
 
 
 
 
+const Blog = lazy(()=>import("./components/blog/Blog"));
+const ParticularBlog = lazy(()=>import("./components/blog/ParticularBlog"));
 const MutualDivorce=lazy(()=>import('./components/mutualDivorce/MutualDivorce'));
 const Divorce=lazy(()=>import('./components/mutualDivorce/Divorce'));
 const Home = lazy(() => import("./components/section/Home"));
@@ -87,6 +89,8 @@ function App() {
           <Route path="/process" element={<Process />} />
           <Route path="/mutual-form" element={<Mutual  />} />
           <Route path="/mutual-divorce" element={<MutualDivorce  />} />
+          {/* New Landing page for mutual divorce form */}
+          <Route path="/service-card" element={<MutualDivorceLandingPage  />} />
           <Route path="/divorce" element={<Divorce />} />
           <Route path="/about" element={<About  />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy  />} />
@@ -124,6 +128,7 @@ function App() {
           <Route path="/show-cause-hearing" element={<ShowCauseHearing />} />
           <Route path="/trademark-assignment" element={<AssignmentOfTM />} />
           <Route path="/trademark-infringement" element={<Infringement />} />
+          <Route path="/thank-you" element={<ThankYou />} />
 
           {/* Blog */}
           <Route path="/blog" element={<Blog />} />

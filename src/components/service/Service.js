@@ -46,19 +46,19 @@ const Service = () => {
                   </motion.button>
                 )} */}
               </>
-               <img
+               {/* <img
                 src={process1}
                 alt="Additional Info"
                 className="mt-5"
                 style={{width:'100%',height:'100%'}}
-              />
+              /> */}
             </motion.div>
 
             <div className="xl:w-6/12 lg:w-6/12 w-full flex-[0_0_auto] px-[15px] max-w-full ml-auto mt-[50px]">
               <div className="card !bg-[#fdf1f8] !mb-6">
                 <div className="card-body flex flex-row p-[40px]">
                   <div>
-                    <div className="svg-inject icon-svg icon-svg-md !w-[2.6rem] !h-[2.6rem] text-[#e668b3] text-fuchsia mr-5">
+                    <div className="svg-inject icon-svg icon-svg-md !w-[2.6rem] !h-[2.6rem] text-[#e668b3] text-fuchsia mr-5 hidden xl:block lg:block md:block">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 507 512"
@@ -104,7 +104,7 @@ const Service = () => {
               <div className="card !bg-[#eff7fa] !mb-6">
                 <div className="card-body flex flex-row p-[40px]">
                   <div>
-                    <div className="svg-inject icon-svg icon-svg-md !w-[2.6rem] !h-[2.6rem] text-[#54a8c7] text-aqua mr-5">
+                    <div className="svg-inject icon-svg icon-svg-md !w-[2.6rem] !h-[2.6rem] text-[#54a8c7] text-aqua mr-5 hidden xl:block lg:block md:block">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 339.8 409.6"
@@ -146,7 +146,7 @@ const Service = () => {
               <div className="card !bg-[#fff8ee] !mb-6">
                 <div className="card-body flex flex-row p-[40px]">
                   <div>
-                    <div className="svg-inject icon-svg icon-svg-md !w-[2.6rem] !h-[2.6rem] text-[#fab758] text-yellow mr-5">
+                    <div className="svg-inject icon-svg icon-svg-md !w-[2.6rem] !h-[2.6rem] text-[#fab758] text-yellow mr-5 hidden xl:block lg:block md:block">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 409.6 361.2"
@@ -195,7 +195,7 @@ const Service = () => {
               <div className="card !bg-[#f3f8f5] !mb-6">
                 <div className="card-body flex flex-row p-[40px]">
                   <div>
-                    <div className="svg-inject icon-svg icon-svg-md !w-[2.6rem] !h-[2.6rem] text-[#7cb798] text-leaf mr-5">
+                    <div className="svg-inject icon-svg icon-svg-md !w-[2.6rem] !h-[2.6rem] text-[#7cb798] text-leaf mr-5 hidden xl:block lg:block md:block">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 512 427.5"
@@ -240,7 +240,7 @@ const Service = () => {
               <div className="card !bg-[#fef4f2] !mb-6 ">
                 <div className="card-body flex flex-row p-[40px]">
                   <div>
-                    <div className="svg-inject icon-svg icon-svg-md !w-[2.6rem] !h-[2.6rem] text-[#fab758] text-yellow mr-5">
+                    <div className="svg-inject icon-svg icon-svg-md !w-[2.6rem] !h-[2.6rem] text-[#fab758] text-yellow mr-5 hidden xl:block lg:block md:block">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 409.6 361.2"
@@ -289,7 +289,7 @@ const Service = () => {
               <div className="card !bg-[#f0f0f8]">
                 <div className="card-body flex flex-row p-[40px]">
                   <div>
-                    <div className="svg-inject icon-svg icon-svg-md !w-[2.6rem] !h-[2.6rem] text-[#fab758] text-yellow mr-5">
+                    <div className="svg-inject icon-svg icon-svg-md !w-[2.6rem] !h-[2.6rem] text-[#fab758] text-yellow mr-5 hidden xl:block lg:block md:block">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 409.6 361.2"

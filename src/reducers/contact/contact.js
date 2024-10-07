@@ -11,6 +11,13 @@ const contactReducer = (state = initialState, action) => {
         ...state,
         contact: action.payload,
       };
+      case actionTypes.VERIFY_OTP:
+        case actionTypes.RESEND_OTP:
+        return {
+          ...state,
+          success: action.payload,
+          error: null,
+        };
 
     default:
       return state;

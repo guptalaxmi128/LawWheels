@@ -8,3 +8,8 @@ export const ADD_REACH_OUT='ADD_REACH_OUT';
 export const GET_HEART='GET_HEART';
 export const GET_BLOG='GET_BLOG';
 export const GET_BLOG_BY_SLUG='GET_BLOG_BY_SLUG';
+
+export const VERIFY_OTP='VERIFY_OTP';
+export const RESEND_OTP='RESEND_OTP';
+
+export const ADD_MFPFORM='ADD_MFPFORM';

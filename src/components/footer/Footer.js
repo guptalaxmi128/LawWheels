@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { FaFacebook, FaTwitter, FaInstagram, FaYoutube } from "react-icons/fa";
+import { PhoneCall } from "lucide-react";
 import { Link } from "react-router-dom";
 import logo from "../../assets/images/logo_lw.webp";
 
@@ -42,7 +43,13 @@ const Footer = () => {
                   <p className="!mb-4 font-space-grotesk">
                     info@lawwheels.com
                     <br className="hidden xl:block lg:block text-[#cacaca]" />
-                    +91 9899924222
+                    <div className="flex">
+                      <PhoneCall className="w-3 h-4 mr-1" /> +91 9899924222
+                    </div>
+                    {/* <br className="hidden xl:block lg:block text-[#cacaca]" /> */}
+                    <div className="flex">
+                      <PhoneCall className="w-3 h-4 mr-1" /> 1800 571 1413
+                    </div>
                   </p>
 
                   <div className="flex space-x-4">

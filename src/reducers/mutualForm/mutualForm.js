@@ -4,6 +4,7 @@ const initialState = {
   heDetails: {},
   sheDetails: {},
   requiredDetails: {},
+  mdPetitionForm:{}
 };
 
 const mutualFormReducer = (state = initialState, action) => {
@@ -23,6 +24,11 @@ const mutualFormReducer = (state = initialState, action) => {
         ...state,
         requiredDetails: action.payload,
       };
+      case actionTypes.ADD_MFPFORM:
+        return {
+          ...state,
+          mdPetitionForm: action.payload,
+        };
     default:
       return state;
   }

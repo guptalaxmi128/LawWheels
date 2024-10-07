@@ -134,7 +134,7 @@ const Divorce = () => {
       <Navbar />
    
       <section className="wrapper">
-        <div className="container pt-20 xl:!pt-[6rem] lg:!pt-[6rem] md:!pt-[6rem] sm:!pt-[6rem] lg:mb-5 relative">
+        <div className="container pt-5 xl:!pt-[2rem] lg:!pt-[2rem] md:!pt-[2rem] sm:!pt-[2rem] lg:mb-5 relative">
           <div className="bg-gray-100 p-8 rounded-md mb-10">
             <h2 className="text-2xl font-bold mb-6 text-gray-800 font-space-grotesk ">
              Divorce

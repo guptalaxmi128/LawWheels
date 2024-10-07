@@ -3,7 +3,8 @@ import {
 ADD_HE_DETAILS,
 ADD_SHE_DETAILS,
 ADD_REQUIRED_DETAILS,
-GET_DIVORCE_DETAILS
+GET_DIVORCE_DETAILS,
+ADD_MFPFORM
 } from "../../constants/actionTypes";
 
 export const addHeDetails = (userInfo) => async (dispatch) => {
@@ -50,3 +51,13 @@ export const getDivorceDetails = () => async (dispatch) => {
     }
   };
 
+  export const addMDPForm = (userInfo) => async (dispatch) => {
+    try {
+      const { data } = await api.addMDPForm(userInfo);
+      dispatch({ type: ADD_MFPFORM, payload: data });
+      return data;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  };

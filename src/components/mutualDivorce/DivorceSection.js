@@ -3,17 +3,14 @@ import { FaCheck } from "react-icons/fa";
 
 const DivorceSection = () => {
   return (
-    <div className="bg-orange-50 md:p-20 p-8">
+    <div className="bg-orange-50">
       <div
-        className="container
-         pt-[3.5rem] pb-12 xl:pt-20 lg:pt-20 md:pt-20 xl:pb-[3.5rem] lg:pb-[3.5rem] md:pb-[3.5rem]"
+        className="container xl:pb-[3.5rem] lg:pb-[3.5rem] md:pb-[3.5rem]"
+        //  pt-[3.5rem] pb-12 xl:pt-20 lg:pt-20 md:pt-20 xl:pb-[3.5rem] lg:pb-[3.5rem] md:pb-[3.5rem]
       >
-        <div className="flex flex-wrap mx-[-15px] xl:mx-[-8px] lg:mx-[-8px] mt-[-10px] lg:!mb-10 xl:!mb-10 items-center">
+        <div className="flex flex-wrap mx-[-15px] xl:mx-[-8px] lg:mx-[-8px] mt-[-10px] lg:!mb-10 xl:!mb-10 sm:!mb-10 md:!mb-10 items-center">
           {/* First Part */}
-          <div className=" md:w-1/2  md:mb-0">
-            {/* <button className="rounded-lg gradient-button px-4 py-2 font-semibold text-white transition-colors hover:bg-blue-700 mb-4 font-space-grotesk">
-              Document Required
-            </button> */}
+          <div className=" md:w-1/2  md:mb-0 px-4">
             <h2 className="text-2xl font-semibold mb-2 text-black mb-3 font-space-grotesk">
               Ensure You Have All <br /> Necessary Documents Ready
             </h2>

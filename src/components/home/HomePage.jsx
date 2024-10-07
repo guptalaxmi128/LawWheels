@@ -3,33 +3,37 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useDispatch } from "react-redux";
 import { toast } from "react-hot-toast";
-import { addContact } from "../../actions/contact/contact";
+import { addContact, verifyOtp,resendOtp } from "../../actions/contact/contact";
 import Loader from "../../shared/Loader";
 // import videoUrl from "../../assets/media/movie2.mp4";
 import videoUrl from "../../assets/media/movie4.mp4";
 import movie2 from "../../assets/images/movie2.jpg";
 import logo from "../../assets/images/logo_lw.webp";
 import FreeConsultation from "../freeConsultation/FreeConsultation";
+import OtpInput from "./OtpInput";
 
 const HomePage = () => {
   const [showModal, setShowModal] = useState(false);
   const [hasErrors, setHasErrors] = useState(false);
+  const [leadId, setLeadId] = useState("");
+  const [mobileNumber, setMobileNumber] = useState("");
   const [logoImage, setLogoImage] = useState(
     "https://law-wheel.b-cdn.net/image/logo_law.webp"
   );
   const dispatch = useDispatch();
+  const [contactStep, setContactStep] = useState("contactStep");
   const [loading, setLoading] = useState(false);
   const formik = useFormik({
     initialValues: {
       name: "",
-      surname: "",
+      // surname: "",
       email: "",
       phonenumber: "",
       message: "",
     },
     validationSchema: Yup.object({
-      name: Yup.string().required("Please enter your first name."),
-      surname: Yup.string().required("Please enter your last name."),
+      name: Yup.string().required("Please enter your name."),
+      // surname: Yup.string().required("Please enter your last name."),
       email: Yup.string()
         .email("Invalid email address")
         .matches(
@@ -48,8 +52,8 @@ const HomePage = () => {
       setLoading(true);
       try {
         const data = {
-          firstName: values.name,
-          lastName: values.surname,
+          name: values.name,
+          // lastName: values.surname,
           email: values.email,
           mobileNumber: values.phonenumber,
           message: values.message,
@@ -57,6 +61,9 @@ const HomePage = () => {
         const res = await dispatch(addContact(data));
         if (res.success) {
           toast.success(res.message);
+          setLeadId(res.data.id);
+          setMobileNumber(res.data.mobileNumber);
+          setContactStep("getOtp");
           resetForm();
         }
       } catch (error) {
@@ -76,15 +83,57 @@ const HomePage = () => {
     img.onerror = () => setLogoImage(logo);
   }, []);
 
-
   useEffect(() => {
     setHasErrors(Object.keys(formik.errors).length > 0 && formik.touched);
   }, [formik.errors, formik.touched]);
+
+  const onOtpSubmit = async (otp) => {
+    try {
+      setLoading(true);
+      // console.log("email", email);
+      // console.log("otp", otp);
+      const res = await dispatch(verifyOtp({ leadId, mobileOTP: otp }));
+
+      if (res.success) {
+        toast.success(res.message);
+        setContactStep("contactStep");
+      } else {
+        toast.error(res.message);
+      }
+    } catch (error) {
+      console.error("Error during user verification:", error);
+      toast.error(error?.response?.data?.message || "Something went wrong!");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const onResendOtp = async () => {
+    try {
+      setLoading(true);
+      const res = await dispatch(resendOtp({id:leadId}));
+
+      if (res.success) {
+       toast.success(res.message)
+       
+      } else {
+        toast.error(res.message);
+      }
+    } catch (error) {
+      console.error("Error during resend Otp:", error);
+      toast.error(error?.response?.data?.message ||"Something went wrong");
+    } finally {
+      setLoading(false); // Set loading to false regardless of success or failure
+    }
+  };
   return (
     <>
       <div className="relative z-[1]">
-        <section className={`video-wrapper relative overflow-hidden bg-overlay bg-overlay-gradient py-10  xl:min-h-[68vh] ${
-        hasErrors ? 'custom-height-error' : 'custom-height'} !mt-0 xl:rounded-[1rem] lg:rounded-[1rem] md:rounded-[1rem] xl:mx-6 xl:rounded-[1rem] lg:mx-6 lg:rounded-[1rem] md:mx-6 md:rounded-[1rem] mb-6 z-[1]`}>
+        <section
+          className={`video-wrapper relative overflow-hidden bg-overlay bg-overlay-gradient py-10  xl:min-h-[68vh] ${
+            hasErrors ? "custom-height-error" : "custom-height"
+          } !mt-0 xl:rounded-[1rem] lg:rounded-[1rem] md:rounded-[1rem] xl:mx-6 xl:rounded-[1rem] lg:mx-6 lg:rounded-[1rem] md:mx-6 md:rounded-[1rem] mb-6 z-[1]`}
+        >
           <video
             poster={movie2}
             src={videoUrl}
@@ -129,212 +178,235 @@ const HomePage = () => {
                           setShowModal(true);
                         }}
                       >
-                        Free Consultation
+                        Consult Now
                       </button>
                     </div>
                   </div>
                 </div>
                 <div className="lg:w-6/12 xl:w-5/12 w-full flex-[0_0_auto] px-[10px] max-w-full !text-center text-white !mx-auto">
                   <div className="card !bg-[#ffffff] mt-4">
-                    <div className="card-body xl:!p-[0.5rem] lg:!p-[0.5rem] md:!p-[0.5rem] xxl:!py-4 p-[4px] !relative">
-                    <h2 className="text-sm font-bold xl:text-[1rem] leading-[1.3]  mt-2 mb-4 !text-center font-space-grotesk">
-                        Connect for a Free Consultation
-                      </h2>
+                    {contactStep === "getOtp" && (
+                      <div className="card-body xl:!p-[0.5rem] lg:!p-[0.5rem] md:!p-[0.5rem] xxl:!py-4 p-[4px] !relative flex flex-col justify-center items-center">
+                        <h2 className="text-sm font-bold xl:text-[1rem] leading-[1.3] mt-4 mb-16 !text-center font-space-grotesk">
+                          We have sent the verification code to your +91{" "}
+                          {mobileNumber}
+                        </h2>
+                        <OtpInput length={6} onOtpSubmit={onOtpSubmit} />
 
-                      <form
-                        className="contact-form needs-validation"
-                        onSubmit={formik.handleSubmit}
-                        noValidate
-                      >
-                        <div className="messages"></div>
-                        <div className="flex flex-wrap mx-[-10px]">
-                         <div class="xl:w-6/12 lg:w-6/12 md:w-6/12 w-full flex-[0_0_auto]  px-[15px] max-w-full">
-                            <div className="form-floating relative !mb-2">
-                              <input
-                                id="form_name"
-                                type="text"
-                                name="name"
-                                className={`form-control ${
-                                  formik.touched.name && formik.errors.name
-                                    ? "is-invalid"
-                                    : ""
-                                }  relative block w-full text-[.75rem] font-medium text-[#60697b] bg-[#fefefe] bg-clip-padding border shadow-[0_0_1.25rem_rgba(30,34,40,0.04)] rounded-[0.4rem] border-solid border-[rgba(8,60,130,0.07)] transition-[border-color] duration-[0.15s] ease-in-out focus:text-[#60697b] focus:bg-[rgba(255,255,255,.03)] focus:shadow-[0_0_1.25rem_rgba(30,34,40,0.04),unset] focus:!border-[rgba(63,120,224,0.5)] focus-visible:!border-[rgba(63,120,224,0.5)] focus-visible:!outline-0 placeholder:text-[#959ca9] placeholder:opacity-100 m-0 !pr-9 p-[.6rem_1rem] h-[calc(2.5rem_+_2px)] min-h-[calc(2.5rem_+_2px)] leading-[1.25]`}
-                                placeholder="First Name"
-                                {...formik.getFieldProps("name")}
-                              />
-                              <label
-                                for="form_name"
-                                className="text-[#959ca9] mb-1 inline-block text-[.75rem] absolute z-[2] h-full overflow-hidden text-start text-ellipsis whitespace-nowrap pointer-events-none border origin-[0_0] px-4 py-[0.6rem] border-solid border-transparent left-0 top-0 font-space-grotesk"
-                              >
-                                First Name *
-                              </label>
-                              {formik.touched.name && formik.errors.name ? (
-                                <div className="invalid-feedback font-space-grotesk text-left">
-                                  {formik.errors.name}
-                                </div>
-                              ) : (
-                                <div className="valid-feedback font-space-grotesk">
-                                  Looks good!
-                                </div>
-                              )}
-                            </div>
-                          </div>
-
-                          <div class="xl:w-6/12 lg:w-6/12 md:w-6/12 w-full flex-[0_0_auto] px-[15px] px-[15px]   max-w-full">
-                            <div className="form-floating relative !mb-2">
-                              <input
-                                id="form_surname"
-                                type="text"
-                                name="surname"
-                                placeholder="Last Name"
-                                required
-                                className={`form-control relative block w-full text-[.75rem] font-medium text-[#60697b] bg-[#fefefe] bg-clip-padding border shadow-[0_0_1.25rem_rgba(30,34,40,0.04)] rounded-[0.4rem] border-solid border-[rgba(8,60,130,0.07)] transition-[border-color] duration-[0.15s] ease-in-out focus:text-[#60697b] focus:bg-[rgba(255,255,255,.03)] focus:shadow-[0_0_1.25rem_rgba(30,34,40,0.04),unset] focus:!border-[rgba(63,120,224,0.5)] focus-visible:!border-[rgba(63,120,224,0.5)] focus-visible:!outline-0 placeholder:text-[#959ca9] placeholder:opacity-100 m-0 !pr-9 p-[.6rem_1rem] h-[calc(2.5rem_+_2px)] min-h-[calc(2.5rem_+_2px)] leading-[1.25] ${
-                                  formik.touched.surname &&
-                                  formik.errors.surname
-                                    ? "is-invalid"
-                                    : ""
-                                }`}
-                                {...formik.getFieldProps("surname")}
-                              />
-                              <label
-                                for="form_surname"
-                                className="text-[#959ca9] mb-1 inline-block text-[.75rem] absolute z-[2] h-full overflow-hidden text-start text-ellipsis whitespace-nowrap pointer-events-none border origin-[0_0] px-4 py-[0.6rem] border-solid border-transparent left-0 top-0 font-space-grotesk"
-                              >
-                                Last Name *
-                              </label>
-                              {formik.touched.surname &&
-                              formik.errors.surname ? (
-                                <div className="invalid-feedback font-space-grotesk text-left">
-                                  {formik.errors.surname}
-                                </div>
-                              ) : (
-                                <div className="valid-feedback font-space-grotesk">
-                                  Looks good!
-                                </div>
-                              )}
-                            </div>
-                          </div>
-
-                          <div className=" w-full flex-[0_0_auto] px-[15px] max-w-full">
-                            <div className="form-floating relative !mb-2">
-                              <input
-                                id="form_email"
-                                type="email"
-                                name="email"
-                                className={`form-control  relative block w-full text-[.75rem] font-medium text-[#60697b] bg-[#fefefe] bg-clip-padding border shadow-[0_0_1.25rem_rgba(30,34,40,0.04)] rounded-[0.4rem] border-solid border-[rgba(8,60,130,0.07)] transition-[border-color] duration-[0.15s] ease-in-out focus:text-[#60697b] focus:bg-[rgba(255,255,255,.03)] focus:shadow-[0_0_1.25rem_rgba(30,34,40,0.04),unset] focus:!border-[rgba(63,120,224,0.5)] focus-visible:!border-[rgba(63,120,224,0.5)] focus-visible:!outline-0 placeholder:text-[#959ca9] placeholder:opacity-100 m-0 !pr-9 p-[.6rem_1rem] h-[calc(2.5rem_+_2px)] min-h-[calc(2.5rem_+_2px)] leading-[1.25] ${
-                                  formik.touched.email && formik.errors.email
-                                    ? "is-invalid"
-                                    : ""
-                                }`}
-                                {...formik.getFieldProps("email")}
-                                placeholder="Email"
-                                required
-                              />
-                              <label
-                                for="form_email"
-                                className="text-[#959ca9] mb-1 inline-block text-[.75rem] absolute z-[2] h-full overflow-hidden text-start text-ellipsis whitespace-nowrap pointer-events-none border origin-[0_0] px-4 py-[0.6rem] border-solid border-transparent left-0 top-0 font-space-grotesk"
-                              >
-                                Email *
-                              </label>
-                              {formik.touched.email && formik.errors.email ? (
-                                <div className="invalid-feedback font-space-grotesk text-left">
-                                  {formik.errors.email}
-                                </div>
-                              ) : (
-                                <div className="valid-feedback font-space-grotesk">
-                                  Looks good!
-                                </div>
-                              )}
-                            </div>
-                          </div>
-
-                          <div className=" w-full flex-[0_0_auto] px-[15px] max-w-full">
-                            <div className="form-floating relative !mb-2">
-                              <input
-                                id="form_phonenumber"
-                                type="text"
-                                name="phonenumber"
-                                className={`form-control  relative block w-full text-[.75rem] font-medium text-[#60697b] bg-[#fefefe] bg-clip-padding border shadow-[0_0_1.25rem_rgba(30,34,40,0.04)] rounded-[0.4rem] border-solid border-[rgba(8,60,130,0.07)] transition-[border-color] duration-[0.15s] ease-in-out focus:text-[#60697b] focus:bg-[rgba(255,255,255,.03)] focus:shadow-[0_0_1.25rem_rgba(30,34,40,0.04),unset] focus:!border-[rgba(63,120,224,0.5)] focus-visible:!border-[rgba(63,120,224,0.5)] focus-visible:!outline-0 placeholder:text-[#959ca9] placeholder:opacity-100 m-0 !pr-9 p-[.6rem_1rem] h-[calc(2.5rem_+_2px)] min-h-[calc(2.5rem_+_2px)] leading-[1.25] ${
-                                  formik.touched.phonenumber &&
-                                  formik.errors.phonenumber
-                                    ? "is-invalid"
-                                    : ""
-                                }`}
-                                {...formik.getFieldProps("phonenumber")}
-                                placeholder="Phone Number"
-                                required
-                              />
-                              <label
-                                for="form_phoneNumner"
-                                className="text-[#959ca9] mb-1 inline-block text-[.75rem] absolute z-[2] h-full overflow-hidden text-start text-ellipsis whitespace-nowrap pointer-events-none border origin-[0_0] px-4 py-[0.6rem] border-solid border-transparent left-0 top-0 font-space-grotesk"
-                              >
-                                Phone Number *
-                              </label>
-                              {formik.touched.phonenumber &&
-                              formik.errors.phonenumber ? (
-                                <div className="invalid-feedback font-space-grotesk text-left">
-                                  {formik.errors.phonenumber}
-                                </div>
-                              ) : (
-                                <div className="valid-feedback font-space-grotesk">
-                                  Looks good!
-                                </div>
-                              )}
-                            </div>
-                          </div>
-
-                          <div className=" w-full flex-[0_0_auto] px-[15px] max-w-full">
-                            <div className="form-floating relative !mb-2">
-                              <textarea
-                                id="form_message"
-                                name="message"
-                                // style={{ height: "150px" }}
-                                required
-                                className={`form-control  relative block w-full text-[.75rem] font-medium text-[#60697b] bg-[#fefefe] bg-clip-padding border shadow-[0_0_1.25rem_rgba(30,34,40,0.04)] rounded-[0.4rem] border-solid border-[rgba(8,60,130,0.07)] transition-[border-color] duration-[0.15s] ease-in-out focus:text-[#60697b] focus:bg-[rgba(255,255,255,.03)] focus:shadow-[0_0_1.25rem_rgba(30,34,40,0.04),unset] focus:!border-[rgba(63,120,224,0.5)] focus-visible:!border-[rgba(63,120,224,0.5)] focus-visible:!outline-0 placeholder:text-[#959ca9] placeholder:opacity-100 m-0 !pr-9 p-[.6rem_1rem] h-[calc(2.5rem_+_2px)] min-h-[calc(2.5rem_+_2px)] leading-[1.25] font-space-grotesk ${
-                                  formik.touched.message &&
-                                  formik.errors.message
-                                    ? "is-invalid"
-                                    : ""
-                                }`}
-                                placeholder="Your message"
-                                {...formik.getFieldProps("message")}
-                              ></textarea>
-                              <label
-                                for="form_message"
-                                className="text-[#959ca9] font-space-grotesk mb-2 inline-block text-[.75rem] absolute z-[2] h-full overflow-hidden text-start text-ellipsis whitespace-nowrap pointer-events-none border origin-[0_0] px-4 py-[0.6rem] border-solid border-transparent left-0 top-0 "
-                              >
-                                Message *
-                              </label>
-                              {formik.touched.message &&
-                              formik.errors.message ? (
-                                <div className="invalid-feedback font-space-grotesk text-left">
-                                  {formik.errors.message}
-                                </div>
-                              ) : (
-                                <div className="valid-feedback font-space-grotesk">
-                                  Looks good!
-                                </div>
-                              )}
-                            </div>
-                          </div>
-
-                          <div className="w-full flex-[0_0_auto] px-[15px] max-w-full !text-center">
-                            <button
-                              type="submit"
-                              className={`flex items-center justify-center btn font-space-grotesk btn-primary text-white !bg-[#3f78e0] border-[#3f78e0] hover:text-white hover:bg-[#3f78e0] hover:border-[#3f78e0] focus:shadow-[rgba(92,140,229,1)] active:text-white active:bg-[#3f78e0] active:border-[#3f78e0] disabled:text-white disabled:bg-[#3f78e0] disabled:border-[#3f78e0] btn-send !mb-3 hover:translate-y-[-0.15rem] hover:shadow-[0_0.25rem_0.75rem_rgba(30,34,40,0.15)] gradient-button ${
-                                loading ? "cursor-not-allowed" : ""
-                              }`}
-                              disabled={loading}
-                            >
-                              {loading && <Loader />}
-                              <span className={`${loading ? "ml-2" : ""}`}>
-                                Schedule Now
-                              </span>
-                            </button>
-                          </div>
+                        {/* Centering the additional content */}
+                        <div className="text-center font-space-grotesk text-black mt-20">
+                          Didn't receive any code?
                         </div>
-                      </form>
-                    </div>
+                        <div className="text-center font-space-grotesk">
+                          <button onClick={onResendOtp} style={{color:"blue"}} >Resend OTP</button>
+                        </div>
+                      </div>
+                    )}
+                    {contactStep === "contactStep" && (
+                      <>
+                        <div className="card-body xl:!p-[0.5rem] lg:!p-[0.5rem] md:!p-[0.5rem] xxl:!py-4 p-[4px] !relative">
+                          <h2 className="text-sm font-bold xl:text-[0.9rem] leading-[1.3]  mt-2 mb-4 !text-center font-space-grotesk">
+                            Connect for a Online/ Telephonic Consultant
+                          </h2>
+
+                          <form
+                            className="contact-form needs-validation"
+                            onSubmit={formik.handleSubmit}
+                            noValidate
+                          >
+                            <div className="messages"></div>
+                            <div className="flex flex-wrap mx-[-10px]">
+                            <div className=" w-full flex-[0_0_auto] px-[15px] max-w-full">
+                                <div className="form-floating relative !mb-2">
+                                  <input
+                                    id="form_name"
+                                    type="text"
+                                    name="name"
+                                    className={`form-control ${
+                                      formik.touched.name && formik.errors.name
+                                        ? "is-invalid"
+                                        : ""
+                                    }  relative block w-full text-[.75rem] font-medium text-[#60697b] bg-[#fefefe] bg-clip-padding border shadow-[0_0_1.25rem_rgba(30,34,40,0.04)] rounded-[0.4rem] border-solid border-[rgba(8,60,130,0.07)] transition-[border-color] duration-[0.15s] ease-in-out focus:text-[#60697b] focus:bg-[rgba(255,255,255,.03)] focus:shadow-[0_0_1.25rem_rgba(30,34,40,0.04),unset] focus:!border-[rgba(63,120,224,0.5)] focus-visible:!border-[rgba(63,120,224,0.5)] focus-visible:!outline-0 placeholder:text-[#959ca9] placeholder:opacity-100 m-0 !pr-9 p-[.6rem_1rem] h-[calc(2.5rem_+_2px)] min-h-[calc(2.5rem_+_2px)] leading-[1.25]`}
+                                    placeholder="Name"
+                                    {...formik.getFieldProps("name")}
+                                  />
+                                  <label
+                                    for="form_name"
+                                    className="text-[#959ca9] mb-1 inline-block text-[.75rem] absolute z-[2] h-full overflow-hidden text-start text-ellipsis whitespace-nowrap pointer-events-none border origin-[0_0] px-4 py-[0.6rem] border-solid border-transparent left-0 top-0 font-space-grotesk"
+                                  >
+                                    Name *
+                                  </label>
+                                  {formik.touched.name && formik.errors.name ? (
+                                    <div className="invalid-feedback font-space-grotesk text-left">
+                                      {formik.errors.name}
+                                    </div>
+                                  ) : (
+                                    <div className="valid-feedback font-space-grotesk">
+                                      Looks good!
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+
+                              {/* <div class="xl:w-6/12 lg:w-6/12 md:w-6/12 w-full flex-[0_0_auto] px-[15px] px-[15px]   max-w-full">
+                                <div className="form-floating relative !mb-2">
+                                  <input
+                                    id="form_surname"
+                                    type="text"
+                                    name="surname"
+                                    placeholder="Last Name"
+                                    required
+                                    className={`form-control relative block w-full text-[.75rem] font-medium text-[#60697b] bg-[#fefefe] bg-clip-padding border shadow-[0_0_1.25rem_rgba(30,34,40,0.04)] rounded-[0.4rem] border-solid border-[rgba(8,60,130,0.07)] transition-[border-color] duration-[0.15s] ease-in-out focus:text-[#60697b] focus:bg-[rgba(255,255,255,.03)] focus:shadow-[0_0_1.25rem_rgba(30,34,40,0.04),unset] focus:!border-[rgba(63,120,224,0.5)] focus-visible:!border-[rgba(63,120,224,0.5)] focus-visible:!outline-0 placeholder:text-[#959ca9] placeholder:opacity-100 m-0 !pr-9 p-[.6rem_1rem] h-[calc(2.5rem_+_2px)] min-h-[calc(2.5rem_+_2px)] leading-[1.25] ${
+                                      formik.touched.surname &&
+                                      formik.errors.surname
+                                        ? "is-invalid"
+                                        : ""
+                                    }`}
+                                    {...formik.getFieldProps("surname")}
+                                  />
+                                  <label
+                                    for="form_surname"
+                                    className="text-[#959ca9] mb-1 inline-block text-[.75rem] absolute z-[2] h-full overflow-hidden text-start text-ellipsis whitespace-nowrap pointer-events-none border origin-[0_0] px-4 py-[0.6rem] border-solid border-transparent left-0 top-0 font-space-grotesk"
+                                  >
+                                    Last Name *
+                                  </label>
+                                  {formik.touched.surname &&
+                                  formik.errors.surname ? (
+                                    <div className="invalid-feedback font-space-grotesk text-left">
+                                      {formik.errors.surname}
+                                    </div>
+                                  ) : (
+                                    <div className="valid-feedback font-space-grotesk">
+                                      Looks good!
+                                    </div>
+                                  )}
+                                </div>
+                              </div> */}
+
+                              <div className=" w-full flex-[0_0_auto] px-[15px] max-w-full">
+                                <div className="form-floating relative !mb-2">
+                                  <input
+                                    id="form_email"
+                                    type="email"
+                                    name="email"
+                                    className={`form-control  relative block w-full text-[.75rem] font-medium text-[#60697b] bg-[#fefefe] bg-clip-padding border shadow-[0_0_1.25rem_rgba(30,34,40,0.04)] rounded-[0.4rem] border-solid border-[rgba(8,60,130,0.07)] transition-[border-color] duration-[0.15s] ease-in-out focus:text-[#60697b] focus:bg-[rgba(255,255,255,.03)] focus:shadow-[0_0_1.25rem_rgba(30,34,40,0.04),unset] focus:!border-[rgba(63,120,224,0.5)] focus-visible:!border-[rgba(63,120,224,0.5)] focus-visible:!outline-0 placeholder:text-[#959ca9] placeholder:opacity-100 m-0 !pr-9 p-[.6rem_1rem] h-[calc(2.5rem_+_2px)] min-h-[calc(2.5rem_+_2px)] leading-[1.25] ${
+                                      formik.touched.email &&
+                                      formik.errors.email
+                                        ? "is-invalid"
+                                        : ""
+                                    }`}
+                                    {...formik.getFieldProps("email")}
+                                    placeholder="Email"
+                                    required
+                                  />
+                                  <label
+                                    for="form_email"
+                                    className="text-[#959ca9] mb-1 inline-block text-[.75rem] absolute z-[2] h-full overflow-hidden text-start text-ellipsis whitespace-nowrap pointer-events-none border origin-[0_0] px-4 py-[0.6rem] border-solid border-transparent left-0 top-0 font-space-grotesk"
+                                  >
+                                    Email *
+                                  </label>
+                                  {formik.touched.email &&
+                                  formik.errors.email ? (
+                                    <div className="invalid-feedback font-space-grotesk text-left">
+                                      {formik.errors.email}
+                                    </div>
+                                  ) : (
+                                    <div className="valid-feedback font-space-grotesk">
+                                      Looks good!
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+
+                              <div className=" w-full flex-[0_0_auto] px-[15px] max-w-full">
+                                <div className="form-floating relative !mb-2">
+                                  <input
+                                    id="form_phonenumber"
+                                    type="text"
+                                    name="phonenumber"
+                                    className={`form-control  relative block w-full text-[.75rem] font-medium text-[#60697b] bg-[#fefefe] bg-clip-padding border shadow-[0_0_1.25rem_rgba(30,34,40,0.04)] rounded-[0.4rem] border-solid border-[rgba(8,60,130,0.07)] transition-[border-color] duration-[0.15s] ease-in-out focus:text-[#60697b] focus:bg-[rgba(255,255,255,.03)] focus:shadow-[0_0_1.25rem_rgba(30,34,40,0.04),unset] focus:!border-[rgba(63,120,224,0.5)] focus-visible:!border-[rgba(63,120,224,0.5)] focus-visible:!outline-0 placeholder:text-[#959ca9] placeholder:opacity-100 m-0 !pr-9 p-[.6rem_1rem] h-[calc(2.5rem_+_2px)] min-h-[calc(2.5rem_+_2px)] leading-[1.25] ${
+                                      formik.touched.phonenumber &&
+                                      formik.errors.phonenumber
+                                        ? "is-invalid"
+                                        : ""
+                                    }`}
+                                    {...formik.getFieldProps("phonenumber")}
+                                    placeholder="Phone Number"
+                                    required
+                                  />
+                                  <label
+                                    for="form_phoneNumner"
+                                    className="text-[#959ca9] mb-1 inline-block text-[.75rem] absolute z-[2] h-full overflow-hidden text-start text-ellipsis whitespace-nowrap pointer-events-none border origin-[0_0] px-4 py-[0.6rem] border-solid border-transparent left-0 top-0 font-space-grotesk"
+                                  >
+                                    Phone Number *
+                                  </label>
+                                  {formik.touched.phonenumber &&
+                                  formik.errors.phonenumber ? (
+                                    <div className="invalid-feedback font-space-grotesk text-left">
+                                      {formik.errors.phonenumber}
+                                    </div>
+                                  ) : (
+                                    <div className="valid-feedback font-space-grotesk">
+                                      Looks good!
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+
+                              <div className=" w-full flex-[0_0_auto] px-[15px] max-w-full">
+                                <div className="form-floating relative !mb-2">
+                                  <textarea
+                                    id="form_message"
+                                    name="message"
+                                    // style={{ height: "150px" }}
+                                    required
+                                    className={`form-control  relative block w-full text-[.75rem] font-medium text-[#60697b] bg-[#fefefe] bg-clip-padding border shadow-[0_0_1.25rem_rgba(30,34,40,0.04)] rounded-[0.4rem] border-solid border-[rgba(8,60,130,0.07)] transition-[border-color] duration-[0.15s] ease-in-out focus:text-[#60697b] focus:bg-[rgba(255,255,255,.03)] focus:shadow-[0_0_1.25rem_rgba(30,34,40,0.04),unset] focus:!border-[rgba(63,120,224,0.5)] focus-visible:!border-[rgba(63,120,224,0.5)] focus-visible:!outline-0 placeholder:text-[#959ca9] placeholder:opacity-100 m-0 !pr-9 p-[.6rem_1rem] h-[calc(2.5rem_+_2px)] min-h-[calc(2.5rem_+_2px)] leading-[1.25] font-space-grotesk ${
+                                      formik.touched.message &&
+                                      formik.errors.message
+                                        ? "is-invalid"
+                                        : ""
+                                    }`}
+                                    placeholder="Your message"
+                                    {...formik.getFieldProps("message")}
+                                  ></textarea>
+                                  <label
+                                    for="form_message"
+                                    className="text-[#959ca9] font-space-grotesk mb-2 inline-block text-[.75rem] absolute z-[2] h-full overflow-hidden text-start text-ellipsis whitespace-nowrap pointer-events-none border origin-[0_0] px-4 py-[0.6rem] border-solid border-transparent left-0 top-0 "
+                                  >
+                                    Message *
+                                  </label>
+                                  {formik.touched.message &&
+                                  formik.errors.message ? (
+                                    <div className="invalid-feedback font-space-grotesk text-left">
+                                      {formik.errors.message}
+                                    </div>
+                                  ) : (
+                                    <div className="valid-feedback font-space-grotesk">
+                                      Looks good!
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+
+                              <div className="w-full flex-[0_0_auto] px-[15px] max-w-full !text-center">
+                                <button
+                                  type="submit"
+                                  className={`flex items-center justify-center btn font-space-grotesk btn-primary text-white !bg-[#3f78e0] border-[#3f78e0] hover:text-white hover:bg-[#3f78e0] hover:border-[#3f78e0] focus:shadow-[rgba(92,140,229,1)] active:text-white active:bg-[#3f78e0] active:border-[#3f78e0] disabled:text-white disabled:bg-[#3f78e0] disabled:border-[#3f78e0] btn-send !mb-3 hover:translate-y-[-0.15rem] hover:shadow-[0_0.25rem_0.75rem_rgba(30,34,40,0.15)] gradient-button ${
+                                    loading ? "cursor-not-allowed" : ""
+                                  }`}
+                                  disabled={loading}
+                                >
+                                  {loading && <Loader />}
+                                  <span className={`${loading ? "ml-2" : ""}`}>
+                                    Schedule Now
+                                  </span>
+                                </button>
+                              </div>
+                            </div>
+                          </form>
+                        </div>
+                      </>
+                    )}
                   </div>
                 </div>
               </div>
@@ -432,73 +504,94 @@ const HomePage = () => {
           </div>
 
           <div className="flex justify-center mx-auto mb-10 mt-10">
-  <div className="xxl:w-11/12 w-full px-[15px]">
-    <div className="flex flex-wrap gap-[20px] justify-center items-center text-center mt-[-50px]">
-      {[
-        {
-          bg: "#fef3e4",
-          title: "Mutual Divorce Consultation",
-          shortTitle: "Mutual<br /> Divorce",
-        },
-        { bg: "#e1f6f0", title: "Property Disputes",shortTitle:"Property<br /> Disputes" },
-        {
-          bg: "#f0eaf6",
-          title: "Cheque Bounce Cases",
-          shortTitle: "Cheque<br /> Bounce",
-        },
-        {
-          bg: "#e0e9fa",
-          title: "Consumer Protection",
-          shortTitle:"Consumer<br/>Protection"
-        },
-        { bg: "#fef3e4", title: "Cyber crime Law",shortTitle:'Cybercrime<br />Law' },
-        { bg: "#feece9", title: "Dispute Resolution",shortTitle:'Dispute<br />Resolution' },
-        { bg: "#e1f6f0", title: "Debt Recovery",shortTitle:'Debt<br />Recovery' },
-        { bg: "#fef3e4", title: "Bail and Bonds",shortTitle:'Bail and <br />Bonds' },
-      ].map((item, index) => (
-        <div
-          key={index}
-          className="sm:w-[calc(50%-10px)] lg:w-[calc(25%-15px)] flex-[0_0_auto] max-w-full"
-        >
-          <div
-            className={`svg-bg svg-bg-lg !bg-[${item.bg}] !rounded-[0.8rem] mb-4`}
-          >
-            <div className="svg-inject icon-svg solid text-[#343f52] text-navy">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 186.69 256">
-                <path
-                  className="fill-secondary"
-                  d="M26.69 83.54V58.66a32 32 0 0164 0V80a31.67 31.67 0 013.25.37A47.94 47.94 0 1010.69 48a47.71 47.71 0 0016 35.54z"
-                />
-                <path
-                  className="fill-primary"
-                  d="M170.69 117.33a16 16 0 00-16 16V136a2.68 2.68 0 01-5.35 0v-13.33a16 16 0 10-32 0V136a2.67 2.67 0 11-5.34 0v-24a16 16 0 00-32 0v24a2.67 2.67 0 11-5.34 0V58.67a16 16 0 00-32 0v96a5.32 5.32 0 01-5.33-5.33V128h-5.27C14.51 128 0 142.16 0 159.71.08 216.05 41.09 256 66.3 256h67.06a53.32 53.32 0 0053.33-53.33v-69.33a16 16 0 00-16-16z"
-                />
-              </svg>
+            <div className="xxl:w-11/12 w-full px-[15px]">
+              <div className="flex flex-wrap gap-[20px] justify-center items-center text-center mt-[-50px]">
+                {[
+                  {
+                    bg: "#fef3e4",
+                    title: "Mutual Divorce Consultation",
+                    shortTitle: "Mutual<br /> Divorce",
+                  },
+                  {
+                    bg: "#e1f6f0",
+                    title: "Property Disputes",
+                    shortTitle: "Property<br /> Disputes",
+                  },
+                  {
+                    bg: "#f0eaf6",
+                    title: "Cheque Bounce Cases",
+                    shortTitle: "Cheque<br /> Bounce",
+                  },
+                  {
+                    bg: "#e0e9fa",
+                    title: "Consumer Protection",
+                    shortTitle: "Consumer<br/>Protection",
+                  },
+                  {
+                    bg: "#fef3e4",
+                    title: "Cyber crime Law",
+                    shortTitle: "Cybercrime<br />Law",
+                  },
+                  {
+                    bg: "#feece9",
+                    title: "Dispute Resolution",
+                    shortTitle: "Dispute<br />Resolution",
+                  },
+                  {
+                    bg: "#e1f6f0",
+                    title: "Debt Recovery",
+                    shortTitle: "Debt<br />Recovery",
+                  },
+                  {
+                    bg: "#fef3e4",
+                    title: "Bail and Bonds",
+                    shortTitle: "Bail and <br />Bonds",
+                  },
+                ].map((item, index) => (
+                  <div
+                    key={index}
+                    className="sm:w-[calc(50%-10px)] lg:w-[calc(25%-15px)] flex-[0_0_auto] max-w-full"
+                  >
+                    <div
+                      className={`svg-bg svg-bg-lg !bg-[${item.bg}] !rounded-[0.8rem] mb-4`}
+                    >
+                      <div className="svg-inject icon-svg solid text-[#343f52] text-navy">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 186.69 256"
+                        >
+                          <path
+                            className="fill-secondary"
+                            d="M26.69 83.54V58.66a32 32 0 0164 0V80a31.67 31.67 0 013.25.37A47.94 47.94 0 1010.69 48a47.71 47.71 0 0016 35.54z"
+                          />
+                          <path
+                            className="fill-primary"
+                            d="M170.69 117.33a16 16 0 00-16 16V136a2.68 2.68 0 01-5.35 0v-13.33a16 16 0 10-32 0V136a2.67 2.67 0 11-5.34 0v-24a16 16 0 00-32 0v24a2.67 2.67 0 11-5.34 0V58.67a16 16 0 00-32 0v96a5.32 5.32 0 01-5.33-5.33V128h-5.27C14.51 128 0 142.16 0 159.71.08 216.05 41.09 256 66.3 256h67.06a53.32 53.32 0 0053.33-53.33v-69.33a16 16 0 00-16-16z"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                    <h4 className="text-sm lg:text-[1rem] xl:text-[1rem] font-space-grotesk">
+                      <span
+                        className={`block ${
+                          item.shortTitle ? "lg:hidden xl:hidden" : ""
+                        }`}
+                        dangerouslySetInnerHTML={{
+                          __html: item.shortTitle || item.title,
+                        }}
+                      />
+                      <span
+                        className={`hidden ${
+                          item.shortTitle ? "lg:block xl:block" : ""
+                        }`}
+                        dangerouslySetInnerHTML={{ __html: item.title }}
+                      />
+                    </h4>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
-          <h4 className="text-sm lg:text-[1rem] xl:text-[1rem] font-space-grotesk">
-            <span
-              className={`block ${
-                item.shortTitle ? "lg:hidden xl:hidden" : ""
-              }`}
-              dangerouslySetInnerHTML={{
-                __html: item.shortTitle || item.title,
-              }}
-            />
-            <span
-              className={`hidden ${
-                item.shortTitle ? "lg:block xl:block" : ""
-              }`}
-              dangerouslySetInnerHTML={{ __html: item.title }}
-            />
-          </h4>
-        </div>
-      ))}
-    </div>
-  </div>
-</div>
-
-
         </div>
       </section>
       <FreeConsultation showModal={showModal} setShowModal={setShowModal} />

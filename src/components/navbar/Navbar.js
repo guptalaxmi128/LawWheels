@@ -7,13 +7,15 @@ import {
   HomeIcon,
   ChatAlt2Icon,
 } from "@heroicons/react/outline";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css";
 import FreeConsultation from "../freeConsultation/FreeConsultation";
 import logo from "../../assets/images/logo_lw.webp";
 
 const Navbar = () => {
+  const location=useLocation();
+  const isBlogSlugPath = location.pathname.includes('blog/');
   const [showModal, setShowModal] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
@@ -108,10 +110,19 @@ const Navbar = () => {
                           href="#"
                           data-bs-toggle="dropdown"
                         >
-                           Matrimonial Disputes <ChevronDown className="inline-block w-3 h-4" />
+                          Matrimonial Disputes{" "}
+                          <ChevronDown className="inline-block w-3 h-4" />
                         </a>
                         <ul className="dropdown-menu">
-                        <li className="nav-item">
+                          <li className="nav-item">
+                            <a
+                              className="dropdown-item text-xs font-space-grotesk"
+                              href="/divorce"
+                            >
+                              Divorce
+                            </a>
+                          </li>
+                          <li className="nav-item">
                             <a
                               className="dropdown-item text-xs font-space-grotesk"
                               href="/mutual-divorce"
@@ -119,15 +130,7 @@ const Navbar = () => {
                               Mutual Divorce
                             </a>
                           </li>
-                          <li className="nav-item">
-                            <a
-                              className="dropdown-item text-xs font-space-grotesk"
-                              href="/mutual-form"
-                            >
-                                  Mutual Divorce Form
-                            </a>
-                          </li>
-                        
+
                           {/* <li className="nav-item">
                             <a
                               className="dropdown-item  text-xs font-space-grotesk"
@@ -139,14 +142,14 @@ const Navbar = () => {
                         </ul>
                       </li>
 
-                    
                       <li className="nav-item dropdown">
                         <a
                           className="nav-link dropdown-toggle text-xs font-space-grotesk text-black hover:text-black focus:text-black"
                           href="#"
                           data-bs-toggle="dropdown"
                         >
-                          Criminal<ChevronDown className="inline-block w-3 h-4" />
+                          Criminal
+                          <ChevronDown className="inline-block w-3 h-4" />
                         </a>
                         <ul className="dropdown-menu">
                           <li className="nav-item">
@@ -192,15 +195,14 @@ const Navbar = () => {
                         </ul>
                       </li>
 
-                    
-                 
                       <li className="nav-item dropdown">
                         <a
                           className="nav-link dropdown-toggle text-xs font-space-grotesk text-black hover:text-black focus:text-black"
                           href="#"
                           data-bs-toggle="dropdown"
                         >
-                          Civil<ChevronDown className="inline-block w-3 h-4" />
+                          Civil
+                          <ChevronDown className="inline-block w-3 h-4" />
                         </a>
                         <ul className="dropdown-menu">
                           <li className="nav-item">
@@ -214,20 +216,19 @@ const Navbar = () => {
                           <li className="nav-item">
                             <a
                               className="dropdown-item text-xs font-space-grotesk"
-                               href="/execution-application"
+                              href="/execution-application"
                             >
-                             Execution Application
+                              Execution Application
                             </a>
                           </li>
                           <li className="nav-item">
                             <a
                               className="dropdown-item  text-xs font-space-grotesk"
-                                href="/breach-contract"
+                              href="/breach-contract"
                             >
                               Breach Of Contract
                             </a>
                           </li>
-                       
                         </ul>
                       </li>
                       <li className="nav-item dropdown">
@@ -264,7 +265,16 @@ const Navbar = () => {
                               DRT(Debt Recovery Tribunal)
                             </a>
                           </li>
+
                         </ul>
+                      </li>
+                      <li className="nav-item">
+                        <a
+                          className="nav-link text-xs font-space-grotesk text-black"
+                          href="/blog"
+                        >
+                          Blog
+                        </a>
                       </li>
                       {/* <li className="nav-item dropdown dropdown-mega">
                         <a
@@ -569,15 +579,19 @@ const Navbar = () => {
                     <li className="nav-item hidden xl:block lg:block md:block">
                       <button
                         className="btn btn-sm  !rounded-[50rem] text-xs font-space-grotesk gradient-button "
-                        onClick={() => setShowModal(!showModal)}
+                        // onClick={() => setShowModal(!showModal)}
                       >
-                        <span className="block lg:hidden">
-                          Free Consultation
-                        </span>
-                        <span className="hidden lg:block text-[0.6rem]">
+                        {/* <span className="block lg:hidden">
+                          Consult Now
+                        </span> */}
+                        {/* <span className="hidden lg:block text-[0.6rem]">
                           {" "}
-                          Consult
-                        </span>
+                          Consult 
+                        </span> */}
+                        <div className="font-space-grotesk text-xs flex">
+                          <PhoneCall className="w-4 h-4 mr-1" />
+                          1800 571 1413
+                        </div>
                       </button>
                     </li>
 
@@ -594,6 +608,12 @@ const Navbar = () => {
                       </button>
                       {/* Icon */}
                     </li>
+                    {/* <li className="nav-item hidden xl:block lg:block md:block ml-4">
+      <button className="flex items-center font-space-grotesk gradient-button">
+        <PhoneCall className="w-4 h-4 mr-1" />
+       <span className="text-xs">1800 571 1413</span> 
+      </button>
+    </li> */}
                   </ul>
                 </div>
               </div>
@@ -601,7 +621,8 @@ const Navbar = () => {
           </header>
         </div>
       </section>
-      <div className="marquee-container lg:mb-6 xl:mb-6 sm:mb-0">
+      {/* <div className="marquee-container lg:mb-6 xl:mb-6 sm:mb-0"> */}
+      <div className={`marquee-container ${isBlogSlugPath ? '' : 'lg:mb-6 xl:mb-6 sm:mb-0'}`}>
         <div className="marquee-wrapper">
           <div className="marquee-content">
             <div className="marquee-item font-space-grotesk text-xs">
@@ -618,11 +639,15 @@ const Navbar = () => {
             </div>
             <div className="marquee-item font-space-grotesk text-xs">
               <PhoneCall className="w-4 h-4 mr-1" />
-             +91 9899924222
+              +91 9899924222
             </div>
             <div className="marquee-item font-space-grotesk text-xs">
               <Mail className="w-4 h-4 mr-1" />
               lawWheels@gmail.com
+            </div>
+            <div className="marquee-item font-space-grotesk text-xs">
+              <PhoneCall className="w-4 h-4 mr-1" />
+              Toll Free Number 1800 571 1413 (09:00 AM to 09:00 PM)
             </div>
           </div>
         </div>
@@ -653,7 +678,6 @@ const Navbar = () => {
                 onError={() => setLogoImage(logo)}
                 className="w-16 h-16 object-cover mx-auto"
               />
-             
             </div>
             <div className="flex flex-col gap-6">
               <Link
@@ -726,7 +750,7 @@ const Navbar = () => {
                 </AnimatePresence>
               </div> */}
 
-               <div className="relative" ref={dropdownRef}>
+              <div className="relative" ref={dropdownRef}>
                 <button
                   className="text-custom-xs sm:text-custom-sm flex items-center text-white font-space-grotesk"
                   onClick={() => toggleDropdown("matrimonialDisputes")}
@@ -751,26 +775,25 @@ const Navbar = () => {
                       <ul className="py-1">
                         <li className="px-2 py-1">
                           <Link
-                            to="/mutual-divorce"
+                            to="/divorce"
                             className="block text-xs text-blue-800 font-space-grotesk"
                           >
-                            Mutual Divorce
+                            Divorce
                           </Link>
                         </li>
                         <li className="px-2 py-1">
                           <Link
-                            to="/mutual-form"
+                            to="/mutual-divorce"
                             className="block text-xs  text-blue-800  font-space-grotesk"
                           >
-                            Mutual Divorce Form
-                          </Link> 
+                            Mutual Divorce
+                          </Link>
                         </li>
                       </ul>
                     </motion.div>
                   )}
                 </AnimatePresence>
               </div>
-
 
               <div className="relative" ref={dropdownRef}>
                 <button
@@ -1003,6 +1026,14 @@ const Navbar = () => {
                 </AnimatePresence>
               </div>
 
+              <Link
+                to="/blog"
+                className="text-custom-xs sm:text-custom-sm flex items-center text-white font-space-grotesk"
+              >
+                <HomeIcon className="h-4 w-4 mr-2" />
+                Blog
+              </Link>
+
               <button
                 className="text-custom-xs sm:text-custom-sm flex items-center text-white  font-space-grotesk"
                 onClick={() => {
@@ -1011,7 +1042,14 @@ const Navbar = () => {
                 }}
               >
                 <ChatAlt2Icon className="h-4 w-4 mr-2" />
-                Free Consultation
+                Consult Now
+              </button>
+
+              <button className="btn btn-sm  !rounded-[50rem] text-xs font-space-grotesk gradient-button ">
+                <div className="font-space-grotesk text-xs flex">
+                  <PhoneCall className="w-4 h-4 mr-1" />
+                  1800 571 1413
+                </div>
               </button>
             </div>
           </motion.div>

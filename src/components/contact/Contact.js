@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 // import blurry from "../../assets/images/bg3.jpg";
 import {
   ChevronRightIcon,
@@ -8,66 +8,67 @@ import {
 } from "@heroicons/react/outline";
 import Navbar from "../navbar/Navbar";
 import Footer from "../footer/Footer";
-import { useFormik } from "formik";
-import * as Yup from "yup";
-import { useDispatch } from "react-redux";
-import { toast } from "react-hot-toast";
-import movie2 from "../../assets/images/movie2.jpg";
-import videoUrl from "../../assets/media/movie2.mp4";
-import { addContact } from "../../actions/contact/contact";
-import Loader from "../../shared/Loader";
+// import { useFormik } from "formik";
+// import * as Yup from "yup";
+// import { useDispatch } from "react-redux";
+// import { toast } from "react-hot-toast";
+// import movie2 from "../../assets/images/movie2.jpg";
+// import videoUrl from "../../assets/media/movie2.mp4";
+// import { addContact } from "../../actions/contact/contact";
+// import Loader from "../../shared/Loader";
+import ContactForm from "./ContactForm";
 
 const Contact = () => {
-  const dispatch = useDispatch();
-  const [loading, setLoading] = useState(false);
-  const formik = useFormik({
-    initialValues: {
-      name: "",
-      surname: "",
-      email: "",
-      phonenumber: "",
-      message: "",
-    },
-    validationSchema: Yup.object({
-      name: Yup.string().required("Please enter your first name."),
-      surname: Yup.string().required("Please enter your last name."),
-      email: Yup.string()
-    .email("Invalid email address")
-    .matches(
-      /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-      "Please provide a valid email address."
-    )
-    .required("Please provide a valid email address."),
-      phonenumber: Yup.string()
-        .required("Please enter your phone number.")
-        .matches(/^\d{10}$/, "Phone number must be exactly 10 digits."),
-      message: Yup.string()
-        .required("Please enter your message.")
-        .min(20, "Your message must be at least 20 characters long."),
-    }),
-    onSubmit: async (values, { resetForm }) => {
-      setLoading(true);
-      try {
-        const data = {
-          firstName: values.name,
-          lastName: values.surname,
-          email: values.email,
-          mobileNumber: values.phonenumber,
-          message: values.message,
-        };
-        const res = await dispatch(addContact(data));
-        if (res.success) {
-          toast.success(res.message);
-          resetForm();
-        }
-      } catch (error) {
-        console.error(error);
-        toast.error(error?.response?.data?.message || "Something went wrong");
-      } finally {
-        setLoading(false);
-      }
-    },
-  });
+  // const dispatch = useDispatch();
+  // const [loading, setLoading] = useState(false);
+  // const formik = useFormik({
+  //   initialValues: {
+  //     name: "",
+  //     surname: "",
+  //     email: "",
+  //     phonenumber: "",
+  //     message: "",
+  //   },
+  //   validationSchema: Yup.object({
+  //     name: Yup.string().required("Please enter your first name."),
+  //     surname: Yup.string().required("Please enter your last name."),
+  //     email: Yup.string()
+  //   .email("Invalid email address")
+  //   .matches(
+  //     /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+  //     "Please provide a valid email address."
+  //   )
+  //   .required("Please provide a valid email address."),
+  //     phonenumber: Yup.string()
+  //       .required("Please enter your phone number.")
+  //       .matches(/^\d{10}$/, "Phone number must be exactly 10 digits."),
+  //     message: Yup.string()
+  //       .required("Please enter your message.")
+  //       .min(20, "Your message must be at least 20 characters long."),
+  //   }),
+  //   onSubmit: async (values, { resetForm }) => {
+  //     setLoading(true);
+  //     try {
+  //       const data = {
+  //         firstName: values.name,
+  //         lastName: values.surname,
+  //         email: values.email,
+  //         mobileNumber: values.phonenumber,
+  //         message: values.message,
+  //       };
+  //       const res = await dispatch(addContact(data));
+  //       if (res.success) {
+  //         toast.success(res.message);
+  //         resetForm();
+  //       }
+  //     } catch (error) {
+  //       console.error(error);
+  //       toast.error(error?.response?.data?.message || "Something went wrong");
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   },
+  // });
   return (
     <div>
       <Navbar />
@@ -190,7 +191,7 @@ const Contact = () => {
             </div>
           </div>
 
-          <section className="wrapper relative border-0 upper-end">
+          {/* <section className="wrapper relative border-0 upper-end">
         <div className="container pb-12 relative z-10">
           <div className="flex flex-wrap mx-[-15px] pb-8">
             <div className="card !bg-opacity-10 bg-[#edf2fc]">
@@ -387,11 +388,7 @@ const Contact = () => {
                         </div>
 
                         <div className="w-full flex-[0_0_auto] px-[15px] max-w-full !text-center">
-                          {/* <input
-                          type="submit"
-                          className="btn font-space-grotesk btn-primary text-white !bg-[#3f78e0] border-[#3f78e0] hover:text-white hover:bg-[#3f78e0] hover:border-[#3f78e0] focus:shadow-[rgba(92,140,229,1)] active:text-white active:bg-[#3f78e0] active:border-[#3f78e0] disabled:text-white disabled:bg-[#3f78e0] disabled:border-[#3f78e0]  btn-send !mb-3 hover:translate-y-[-0.15rem] hover:shadow-[0_0.25rem_0.75rem_rgba(30,34,40,0.15)] gradient-button"
-                          value="Schedule My Free Consultation"
-                        /> */}
+                        
                           <button
                             type="submit"
                             className={`flex items-center justify-center btn font-space-grotesk btn-primary text-white !bg-[#3f78e0] border-[#3f78e0] hover:text-white hover:bg-[#3f78e0] hover:border-[#3f78e0] focus:shadow-[rgba(92,140,229,1)] active:text-white active:bg-[#3f78e0] active:border-[#3f78e0] disabled:text-white disabled:bg-[#3f78e0] disabled:border-[#3f78e0] btn-send !mb-3 hover:translate-y-[-0.15rem] hover:shadow-[0_0.25rem_0.75rem_rgba(30,34,40,0.15)] gradient-button ${
@@ -416,7 +413,8 @@ const Contact = () => {
             </div>
           </div>
         </div>
-        </section>
+        </section> */}
+        <ContactForm />
         </div>
       </section>
       <Footer />

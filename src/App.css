@@ -787,6 +787,7 @@ input:where([type='submit']) {
   /* 2 */
 }
 
+
 /*
 Use the modern Firefox focus style for all focusable elements.
 */
@@ -11265,8 +11266,12 @@ blockquote.code.icon-top:before:before,blockquote.external.icon-top:after:before
   background-color: rgb(0 147 233 / var(--tw-bg-opacity));
 }
 
-input,select,textarea {
-  -webkit-appearance:none!important
+/* input,select,textarea {
+  -webkit-appearance:none;
+} */
+
+select,textarea {
+  -webkit-appearance:none;
 }
 
 .form-floating:not(.form-control:disabled)::before {
@@ -35691,7 +35696,15 @@ blockquote.video-wrapper .video-content.icon-top:before {
   min-width: 200px;
 }
 
+
+.blog-content h1,
+.blog-content h2,
+.blog-content h3,
+.blog-content h4 {
+  font-family: 'Space Grotesk', sans-serif;
+}
 /* Modal */
+
 
 .modal-container {
   position: fixed;
@@ -35842,6 +35855,15 @@ blockquote.video-wrapper .video-content.icon-top:before {
   .custom-height-error{
     min-height: 1040px; 
   }
+  .custom-height-mutual{
+    min-height: 1380px; 
+  }
+  .petition-form{
+    padding-top: 30px;
+  }
+  .marquee-content {
+    animation: marquee 30s linear infinite; /* Faster speed for mobile */
+  }
 }
 
 /* Small devices (455px to 553px) */
@@ -35851,6 +35873,11 @@ blockquote.video-wrapper .video-content.icon-top:before {
   }
     .custom-height-error {
     min-height:1030px;
+  }.petition-form{
+    padding-top: 30px;
+  }
+  .marquee-content {
+    animation: marquee 30s linear infinite; /* Faster speed for mobile */
   }
 }
 
@@ -35862,7 +35889,25 @@ blockquote.video-wrapper .video-content.icon-top:before {
   .custom-height-error{
     min-height:936px;
   }
+  .marquee-content {
+    animation: marquee 30s linear infinite; /* Faster speed for mobile */
+  }
+
 }
+
+
+@media (min-width: 768px) and (max-width: 991px) {
+  .custom-height-mutual{
+    min-height:1322px !important;
+  }
+}
+
+@media (min-width: 992px) and (max-width: 1023px) {
+  .custom-height-mutual{
+    min-height:699px !important;
+  }
+}
+
 
 /* Large devices (1024px to 1050px) */
 @media (min-width: 1024px) and (max-width: 1050px) {
@@ -35876,12 +35921,41 @@ blockquote.video-wrapper .video-content.icon-top:before {
   .choose-height{
     min-height: 411px;
   }
+  .custom-height-mutual{
+    min-height:670px;
+  }
 }
 
+@media (min-width: 1051px) and (max-width: 1279px) {
+  .custom-height {
+    /* min-height: 1050px;  */
+    min-height:411px;
+  }
+  .custom-height-error{
+    min-height:630px;
+  }
+  .choose-height{
+    min-height: 411px;
+  }
+  .custom-height-mutual{
+    min-height:711px;
+  }
+}
 
+.otpContainer {
+  display: flex;
+  justify-content: center; /* Align items in the center horizontally */
+}
 
-
-
+.otpInput {
+  width: 45px;
+  height: 50px;
+  margin: 5px;
+  padding:5px;
+  text-align: center;
+  font-size: 1.2em;
+  color: black;
+}
 
 .text-responsive {
   text-align: center; /* Default to center */
@@ -36396,4 +36470,84 @@ min-height:94vh;
     font-size: 0.875rem; /* Equivalent to text-sm */
   }
   
+}
+
+/* for mutual divorce landing page */
+.feature {
+  position: relative;
+}
+
+
+.feature .card .card__icon {
+  width: 86px;
+  min-width: 86px;
+  height: 86px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #FFF;
+  border: 1px solid #DFE0E4;
+  margin: auto;
+}
+
+.feature .card:hover {
+  background: linear-gradient(90deg, rgba(18, 98, 210, 1), rgba(23, 49, 109, 1)) !important;
+}
+
+.feature .card:hover,.subtitle button{
+  color: white;
+}
+.feature .card:hover button{
+  color: white;
+}
+
+.feature .card button{
+  color: #1450ad;
+}
+
+.feature .animation img:first-child {
+  position: absolute;
+  right: 4%;
+  top: 12%;
+  animation: pulse 7s infinite;
+}
+.feature .animation img:nth-child(2) {
+  position: absolute;
+  left: 3%;
+  bottom: 7%;
+  animation: previewShapeX 5s infinite;
+}
+.feature .card .card__title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: auto;
+}
+.feature .card {
+  padding: 10px;
+  gap: 24px;
+}
+
+.card--custom {
+  background: #f7f4f4;
+  padding: 36px;
+  border-radius: 16px;
+  border: none;
+  border: 1px solid #DFE0E4;
+  text-align: center;
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  z-index: 0;
+}
+.card--custom::after {
+  max-width: calc(100% - 12px);
+  max-height: calc(100% - 12px);
+}
+
+.fs-small {
+  font-size: 14px;
+  line-height: 1.5;
 }

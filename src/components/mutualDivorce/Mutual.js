@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { CircleAlert } from "lucide-react";
+// import { CircleAlert } from "lucide-react";
 import Navbar from "../navbar/Navbar";
 import DivorceSection from "./DivorceSection";
-import MutualDivorceForm from "./MutualDivorceForm";
+// import MutualDivorceForm from "./MutualDivorceForm";
 import Footer from "../footer/Footer";
 import { useNavigate } from "react-router-dom";
+import MDPetitionForm from "./MDPetitionForm";
 
 const Mutual = () => {
   const navigate=useNavigate();
@@ -24,12 +25,12 @@ const Mutual = () => {
         <div className="modal-container">
           <div className="modal-content">
             <div className="p-5 text-center">
-              <CircleAlert
+              {/* <CircleAlert
                 size={18}
                 color="orange"
                 className="stroke-1.5 mx-auto mt-3 h-16 w-16"
-              />
-              <div className=" text-3xl font-space-grotesk">Are you sure?</div>
+              /> */}
+              <div className=" text-xl font-space-grotesk">Welcome to Law wheels</div>
 
               <div className="mt-2 text-slate-500 font-space-grotesk font-sm">
                 By submitting this form, you consent to the collection, storage,
@@ -54,7 +55,7 @@ const Mutual = () => {
                 className="transition font-space-grotesk gradient-button duration-200 border shadow-sm inline-flex items-center justify-center py-2 px-3 rounded-md font-medium cursor-pointer focus:ring-4 focus:ring-primary focus:ring-opacity-20 focus-visible:outline-none dark:focus:ring-slate-700 dark:focus:ring-opacity-50 [&:hover:not(:disabled)]:bg-opacity-90 [&:hover:not(:disabled)]:border-opacity-90 [&:not(button)]:text-center disabled:opacity-70 disabled:cursor-not-allowed bg-primary border-primary text-white dark:border-primary w-24"
                 onClick={() => setShowModal(false)}
               >
-                Save
+                Okay
               </button>
             </div>
           </div>
@@ -66,7 +67,9 @@ const Mutual = () => {
       <div className="pb-20">
         <DivorceSection />
       </div>
-      <MutualDivorceForm />
+      <div className="petition-form">
+      <MDPetitionForm />
+      </div>
       <Footer />
     </div>
   );
