@@ -576,18 +576,12 @@ const Navbar = () => {
                 </div>
                 <div className="navbar-other w-full !flex !ml-auto">
                   <ul className="navbar-nav !flex-row !items-center !ml-auto">
-                    <li className="nav-item hidden xl:block lg:block md:block">
+                    <li className="nav-item xl:block lg:block md:block">
                       <button
                         className="btn btn-sm  !rounded-[50rem] text-xs font-space-grotesk gradient-button "
-                        // onClick={() => setShowModal(!showModal)}
+                    
                       >
-                        {/* <span className="block lg:hidden">
-                          Consult Now
-                        </span> */}
-                        {/* <span className="hidden lg:block text-[0.6rem]">
-                          {" "}
-                          Consult 
-                        </span> */}
+                        
                         <div className="font-space-grotesk text-xs flex">
                           <PhoneCall className="w-4 h-4 mr-1" />
                           1800 571 1413
@@ -1044,13 +1038,13 @@ const Navbar = () => {
                 <ChatAlt2Icon className="h-4 w-4 mr-2" />
                 Consult Now
               </button>
-
+{/* 
               <button className="btn btn-sm  !rounded-[50rem] text-xs font-space-grotesk gradient-button ">
                 <div className="font-space-grotesk text-xs flex">
                   <PhoneCall className="w-4 h-4 mr-1" />
                   1800 571 1413
                 </div>
-              </button>
+              </button> */}
             </div>
           </motion.div>
         )}
